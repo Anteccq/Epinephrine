@@ -102,6 +102,24 @@ public class ServiceRegisterTest
 
     public class TestServiceResolver : IServiceResolver
     {
+        public T ResolveService<T>()
+        {
+            throw new NotImplementedException();
+        }
 
+        public object ResolveService(Type requireServiceType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> ResolveServices<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<object> ResolveServices(Type requireServiceType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
