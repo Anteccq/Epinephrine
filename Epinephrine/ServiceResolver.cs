@@ -79,12 +79,12 @@ internal class ServiceResolver : IServiceResolver
 
     private T ResolveWithNoImplementFunc<T>(Type implementType, InstanceType instanceType)
     {
-        throw new NotImplementedException();
+        return (T)ResolveWithNoImplementFunc(typeof(T), implementType, instanceType);
     }
 
     private object ResolveWithNoImplementFunc(Type requiredType, Type implementType, InstanceType instanceType)
     {
-        throw new NotImplementedException();
+        return ResolveWithConstructor(requiredType, implementType);
     }
 
     private T ResolveWithImplementFunc<T>(Type implementType, ServiceInstanceInfo instanceInfo)
@@ -103,7 +103,7 @@ internal class ServiceResolver : IServiceResolver
 
     private object ResolveWithConstructor(Type requiredType, Type implementType)
     {
-        if (implementType.IsAssignableTo(requiredType))
+        if (implementType.IsAssignableFrom(requiredType))
             throw new InvalidCastException();
 
         var constructorInfos = implementType.GetConstructors();
@@ -112,16 +112,11 @@ internal class ServiceResolver : IServiceResolver
         if (targetConstructorArguments is null)
             throw new NotSupportedException();
 
-        if (targetConstructorArguments.Length != 0)
-        {
-            var arguments = targetConstructorArguments.Select(x => IsResolvableIEnumerableType(x.ParameterType, out var keyType) ? Resolve(keyType) : ResolveService(x.ParameterType)).ToArray();
-            
-            return Activator.CreateInstance(implementType, arguments)!;
-        }
-        else
-        {
+        if (targetConstructorArguments.Length == 0) 
             return Activator.CreateInstance(implementType)!;
-        }
+
+        var arguments = targetConstructorArguments.Select(x => IsResolvableIEnumerableType(x.ParameterType, out var keyType) ? Resolve(keyType) : ResolveService(x.ParameterType)).ToArray();
+        return Activator.CreateInstance(implementType, arguments)!;
     }
 
     private bool IsResolvableIEnumerableType(Type type,[NotNullWhen(true)] out Type? keyType)
