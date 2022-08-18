@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Epinephrine.Interfaces;
 using Epinephrine.Models;
 
@@ -100,8 +101,11 @@ internal class ServiceResolver : IServiceResolver
         return instance;
     }
 
-    private T ResolveWithConstructor<T>(Type implementType)
+    private object ResolveWithConstructor(Type requiredType, Type implementType)
     {
+        if (implementType.IsAssignableTo(requiredType))
+            throw new InvalidCastException();
+
         var constructorInfos = implementType.GetConstructors();
         var targetConstructorArguments = constructorInfos.Select(x => x.GetParameters()).MaxBy(x => x.Length);
 
@@ -110,31 +114,29 @@ internal class ServiceResolver : IServiceResolver
 
         if (targetConstructorArguments.Length != 0)
         {
-            var arguments = targetConstructorArguments.Select(x =>
-            {
-                if (x.ParameterType.GetInterface(nameof(IEnumerable)) is null)
-                    return ResolveService(x.ParameterType);
-
-                if (!x.ParameterType.IsConstructedGenericType)
-                    throw new NotSupportedException();
-
-                return Resolve(x.ParameterType);
-            }).ToArray();
+            var arguments = targetConstructorArguments.Select(x => IsResolvableIEnumerableType(x.ParameterType, out var keyType) ? Resolve(keyType) : ResolveService(x.ParameterType)).ToArray();
             
-            var instance = Activator.CreateInstance(implementType, arguments);
-            
-            if (instance is not T result)
-                throw new UriFormatException();
-
-            return result;
+            return Activator.CreateInstance(implementType, arguments)!;
         }
         else
         {
-            var instance = Activator.CreateInstance(implementType);
-            if (instance is not T result)
-                throw new UriFormatException();
-            
-            return result;
+            return Activator.CreateInstance(implementType)!;
         }
+    }
+
+    private bool IsResolvableIEnumerableType(Type type,[NotNullWhen(true)] out Type? keyType)
+    {
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) && type.GetGenericArguments().Length == 1)
+        {
+            var parameterType = type.GetGenericArguments().Single();
+            if (_servicesDictionary.ContainsKey(parameterType))
+            {
+                keyType = parameterType;
+                return true;
+            }
+        }
+
+        keyType = null;
+        return false;
     }
 }
