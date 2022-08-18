@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epinephrine", "Epinephrine\Epinephrine.csproj", "{7C78C3DA-B077-4A55-9992-4D69105B08B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Epinephrine", "Epinephrine\Epinephrine.csproj", "{7C78C3DA-B077-4A55-9992-4D69105B08B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epinephrine.Tests", "Epinephrine.Tests\Epinephrine.Tests.csproj", "{F60DBFAE-1011-4CD6-A08A-F5F67787B4BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Epinephrine.Tests", "Epinephrine.Tests\Epinephrine.Tests.csproj", "{F60DBFAE-1011-4CD6-A08A-F5F67787B4BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{071A1451-7477-4A0E-8EFC-296D5D24273A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F60DBFAE-1011-4CD6-A08A-F5F67787B4BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F60DBFAE-1011-4CD6-A08A-F5F67787B4BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F60DBFAE-1011-4CD6-A08A-F5F67787B4BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{071A1451-7477-4A0E-8EFC-296D5D24273A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{071A1451-7477-4A0E-8EFC-296D5D24273A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{071A1451-7477-4A0E-8EFC-296D5D24273A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{071A1451-7477-4A0E-8EFC-296D5D24273A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

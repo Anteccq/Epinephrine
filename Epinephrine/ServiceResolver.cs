@@ -6,7 +6,7 @@ using Epinephrine.Models;
 
 namespace Epinephrine;
 
-internal class ServiceResolver : IServiceResolver
+public class ServiceResolver : IServiceResolver
 {
     private readonly IReadOnlyDictionary<Type, IDictionary<Type, ServiceInstanceInfo>> _servicesDictionary;
 

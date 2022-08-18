@@ -56,6 +56,7 @@ public class ServiceRegister : IServiceRegister
         return this;
     }
 
+    //RegisterTransient<IService, Service>()
     private void RegisterService(Type serviceType, Type implementType, InstanceType instanceType, Func<IServiceResolver, object>? implementFunc)
     {
         if (_registeredServices.ContainsKey(serviceType))
