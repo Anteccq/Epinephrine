@@ -77,7 +77,5 @@ public class ServiceRegister : IServiceRegister
     }
 
     public IServiceResolver CreateResolver()
-    {
-        throw new NotSupportedException("Implement in future");
-    }
+        => new ServiceResolver(_registeredServices);
 }
