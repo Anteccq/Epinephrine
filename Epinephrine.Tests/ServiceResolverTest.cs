@@ -138,6 +138,38 @@ public class ServiceResolverTest
         resolvedCloseGenericTypeInstance.Should().BeOfType<GenericTypeTestClass<ConstructorWithNoParameterTestClass>>();
     }
 
+    [Fact]
+    public void ResolveSingletonInstanceTypeTest()
+    {
+        var implementInfoDictionary = new Dictionary<Type, ServiceInstanceInfo>
+        {
+            { typeof(ConstructorWithNoParameterTestClass), new ServiceInstanceInfo(InstanceType.Singleton, null) }
+        };
+        var serviceDictionary = new ConcurrentDictionary<Type, IDictionary<Type, ServiceInstanceInfo>>();
+        serviceDictionary.TryAdd(typeof(ITestInterface), implementInfoDictionary);
+
+        var resolver = new ServiceResolver(serviceDictionary);
+        var instance = resolver.ResolveService<ITestInterface>();
+        var instance2 = resolver.ResolveService<ITestInterface>();
+        instance.Should().Be(instance2);
+    }
+
+    [Fact]
+    public void ResolveTransientInstanceTypeTest()
+    {
+        var implementInfoDictionary = new Dictionary<Type, ServiceInstanceInfo>
+        {
+            { typeof(ConstructorWithNoParameterTestClass), new ServiceInstanceInfo(InstanceType.Transient, null) }
+        };
+        var serviceDictionary = new ConcurrentDictionary<Type, IDictionary<Type, ServiceInstanceInfo>>();
+        serviceDictionary.TryAdd(typeof(ITestInterface), implementInfoDictionary);
+
+        var resolver = new ServiceResolver(serviceDictionary);
+        var instance = resolver.ResolveService<ITestInterface>();
+        var instance2 = resolver.ResolveService<ITestInterface>();
+        instance.Should().NotBe(instance2);
+    }
+
     public interface ITestInterface
     {
         string Key { get; }
