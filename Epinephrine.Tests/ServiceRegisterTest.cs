@@ -81,9 +81,35 @@ public class ServiceRegisterTest
         ((TestImplementServiceWithConstructor)info.InstanceFunc!(new TestServiceResolver())).Key.Should().Be(expectedKey);
     }
 
+    [Fact]
+    public void Register_OpenGenericType_Test()
+    {
+        var registeredServices = new ConcurrentDictionary<Type, IDictionary<Type, ServiceInstanceInfo>>();
+        var serviceRegister = new ServiceRegister(registeredServices);
+        var resultRegister = serviceRegister.RegisterSingleton(typeof(IGenericTestService<>), typeof(GenericTestService<>));
+
+        resultRegister.Should().Be(serviceRegister);
+
+        registeredServices.Should().HaveCount(1);
+        registeredServices.TryGetValue(typeof(IGenericTestService<>), out var instanceInfoDictionary).Should().BeTrue();
+        instanceInfoDictionary.Should().HaveCount(1);
+        instanceInfoDictionary!.TryGetValue(typeof(GenericTestService<>), out var info).Should().BeTrue();
+        info!.InstanceType.Should().Be(InstanceType.Singleton);
+    }
+
     public interface ITestService
     {
         
+    }
+
+    public interface IGenericTestService<T>
+    {
+
+    }
+
+    public class GenericTestService<T> : IGenericTestService<T>
+    {
+
     }
 
     public class TestImplementService : ITestService
