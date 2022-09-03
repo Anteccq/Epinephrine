@@ -18,41 +18,24 @@ public class ServiceRegister : IServiceRegister
         _registeredServices = registeredServices;
     }
 
-    public IServiceRegister RegisterSingleton<TService, TImplement>()
-        => Register<TService, TImplement>(InstanceType.Singleton);
+    public IServiceRegister RegisterSingleton<TService, TImplement>(Func<IServiceResolver, TImplement>? implementFunc = null)
+        => Register<TService, TImplement>(InstanceType.Singleton, implementFunc as Func<IServiceResolver, object>);
 
-    public IServiceRegister RegisterTransient<TService, TImplement>()
-        => Register<TService, TImplement>(InstanceType.Transient);
+    public IServiceRegister RegisterTransient<TService, TImplement>(Func<IServiceResolver, TImplement>? implementFunc = null)
+        => Register<TService, TImplement>(InstanceType.Transient, implementFunc as Func<IServiceResolver, object>);
 
-    public IServiceRegister RegisterSingleton<TService, TImplement>(Func<IServiceResolver, TImplement> implementFunc)
-        => Register<TService, TImplement>(InstanceType.Singleton, x => implementFunc(x)!);
+    public IServiceRegister RegisterSingleton(Type serviceType, Type implementType, Func<IServiceResolver, object>? implementFunc = null)
+        => Register(serviceType, implementType, InstanceType.Singleton, implementFunc);
 
-    public IServiceRegister RegisterTransient<TService, TImplement>(Func<IServiceResolver, TImplement> implementFunc)
-        => Register<TService, TImplement>(InstanceType.Transient, x => implementFunc(x)!);
+    public IServiceRegister RegisterTransient(Type serviceType, Type implementType, Func<IServiceResolver, object>? implementFunc = null)
+        => Register(serviceType, implementType, InstanceType.Transient, implementFunc);
 
-    public IServiceRegister Register<TService, TImplement>(InstanceType instanceType)
+    public IServiceRegister Register<TService, TImplement>(InstanceType instanceType, Func<IServiceResolver, object>? implementFunc = null)
+        => Register(typeof(TService), typeof(TImplement), instanceType, implementFunc);
+
+    public IServiceRegister Register(Type serviceType, Type implementType, InstanceType instanceType, Func<IServiceResolver, object>? implementFunc = null)
     {
-        var implementType = typeof(TImplement);
-        var serviceType = typeof(TService);
-
-        if (implementType.GetInterface(serviceType.Name) is null)
-            throw new ArgumentException($"{implementType.Name} must be implement {serviceType.Name}");
-
-        RegisterService(serviceType, implementType, instanceType, null);
-
-        return this;
-    }
-
-    public IServiceRegister Register<TService, TImplement>(InstanceType instanceType, Func<IServiceResolver, object> implementFunc)
-    {
-        var implementType = typeof(TImplement);
-        var serviceType = typeof(TService);
-
-        if (implementType.GetInterface(serviceType.Name) is null)
-            throw new ArgumentException($"{implementType.Name} must be implement {serviceType.Name}");
-
         RegisterService(serviceType, implementType, instanceType, implementFunc);
-
         return this;
     }
 
